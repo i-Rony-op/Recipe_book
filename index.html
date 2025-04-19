@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delicious Recipes</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        background-color: #ff6b6b;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .search-bar {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+      input[type="text"] {
+        width: 60%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #4ecdc4;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #36b3a8;
+      }
+
+      .category-filter {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .category-btn {
+        padding: 8px 16px;
+        background-color: #ffffff;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .category-btn:hover,
+      .category-btn.active {
+        background-color: #ff6b6b;
+        color: white;
+        border-color: #ff6b6b;
+      }
+
+      .recipes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .recipe-card {
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .recipe-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .recipe-image {
+        height: 200px;
+        background-color: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #888;
+        font-size: 14px;
+      }
+
+      .recipe-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .recipe-content {
+        padding: 20px;
+      }
+
+      .recipe-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .recipe-meta {
+        display: flex;
+        justify-content: space-between;
+        color: #666;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+
+      .recipe-description {
+        color: #666;
+        margin-bottom: 15px;
+      }
+
+      .view-recipe {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4ecdc4;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+      }
+
+      .view-recipe:hover {
+        background-color: #36b3a8;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        overflow-y: auto;
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 50px auto;
+        padding: 30px;
+        width: 90%;
+        max-width: 800px;
+        border-radius: 10px;
+        position: relative;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #666;
+      }
+
+      .recipe-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .recipe-details {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .detail {
+        text-align: center;
+        padding: 10px;
+      }
+
+      .detail-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #ff6b6b;
+      }
+
+      .recipe-section {
+        margin-bottom: 30px;
+      }
+
+      .recipe-section h3 {
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .ingredients-list,
+      .steps-list {
+        padding-left: 20px;
+      }
+
+      .ingredients-list li,
+      .steps-list li {
+        margin-bottom: 10px;
+      }
+
+      .steps-list li {
+        padding-left: 10px;
+      }
+
+      .nutrition {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .nutrition-item {
+        background-color: #f5f5f5;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      @media (max-width: 768px) {
+        input[type="text"] {
+          width: 70%;
+        }
+
+        .recipes-grid {
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+
+        .modal-content {
+          width: 95%;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Delicious Recipes</h1>
+        <p>Discover the joy of cooking with our collection of tasty recipes!</p>
+      </header>
+
+      <div class="search-bar">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search for recipes..."
+        />
+        <button id="search-btn">Search</button>
+      </div>
+
+      <div class="category-filter">
+        <button class="category-btn active" data-category="all">All</button>
+        <button class="category-btn" data-category="breakfast">
+          Breakfast
+        </button>
+        <button class="category-btn" data-category="lunch">Lunch</button>
+        <button class="category-btn" data-category="dinner">Dinner</button>
+        <button class="category-btn" data-category="dessert">Dessert</button>
+        <button class="category-btn" data-category="vegetarian">
+          Vegetarian
+        </button>
+      </div>
+
+      <div class="recipes-grid" id="recipes-container"></div>
+    </div>
+
+    <div class="modal" id="recipe-modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <div id="modal-content-container"></div>
+      </div>
+    </div>
+
+    <script>
+      const recipes = [
+        {
+          id: 1,
+          title: "Classic Pancakes",
+          img: "https://www.marthastewart.com/thmb/Vgb9cQSlegZz5fcoSbkkqyHPmHY=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/338185-basic-pancakes-09-00b18f8418fd4e52bb2050173d083d04.jpg",
+          category: "breakfast",
+          prepTime: "10 mins",
+          cookTime: "15 mins",
+          servings: 4,
+          difficulty: "Easy",
+          description:
+            "Fluffy, golden pancakes perfect for a weekend breakfast.",
+          ingredients: [
+            "1 1/2 cups all-purpose flour",
+            "3 1/2 teaspoons baking powder",
+            "1 teaspoon salt",
+            "1 tablespoon white sugar",
+            "1 1/4 cups milk",
+            "1 egg",
+            "3 tablespoons butter, melted",
+          ],
+          steps: [
+            "In a large bowl, sift together the flour, baking powder, salt and sugar.",
+            "Make a well in the center and pour in the milk, egg and melted butter; mix until smooth.",
+            "Heat a lightly oiled griddle or frying pan over medium-high heat.",
+            "Pour the batter onto the griddle, using approximately 1/4 cup for each pancake.",
+            "Brown on both sides and serve hot with maple syrup.",
+          ],
+          nutrition: {
+            calories: 158,
+            fat: 6.8,
+            carbs: 21.7,
+            protein: 3.9,
+          },
+        },
+        {
+          id: 2,
+          title: "Mediterranean Salad",
+          img: "https://www.simplejoy.com/wp-content/uploads/2022/01/mediterranean-salad.jpg",
+          category: "lunch",
+          prepTime: "15 mins",
+          cookTime: "0 mins",
+          servings: 2,
+          difficulty: "Easy",
+          description:
+            "A refreshing salad with Mediterranean flavors, perfect for a light lunch.",
+          ingredients: [
+            "2 cups mixed greens",
+            "1 cucumber, diced",
+            "1 cup cherry tomatoes, halved",
+            "1/2 red onion, thinly sliced",
+            "1/2 cup kalamata olives",
+            "1/2 cup feta cheese, crumbled",
+            "2 tablespoons olive oil",
+            "1 tablespoon lemon juice",
+            "1 teaspoon dried oregano",
+            "Salt and pepper to taste",
+          ],
+          steps: [
+            "In a large bowl, combine mixed greens, cucumber, tomatoes, red onion, olives, and feta cheese.",
+            "In a small bowl, whisk together olive oil, lemon juice, oregano, salt, and pepper.",
+            "Pour the dressing over the salad and toss gently to combine.",
+            "Serve immediately and enjoy!",
+          ],
+          nutrition: {
+            calories: 220,
+            fat: 18,
+            carbs: 10,
+            protein: 6,
+          },
+        },
+        {
+          id: 3,
+          title: "Spaghetti Bolognese",
+          img: "https://www.preciouscore.com/wp-content/uploads/2024/06/Spaghetti-Bolognese-Chicken.jpg",
+          category: "dinner",
+          prepTime: "20 mins",
+          cookTime: "1 hour",
+          servings: 6,
+          difficulty: "Medium",
+          description: "A classic Italian pasta dish with a rich meat sauce.",
+          ingredients: [
+            "1 pound spaghetti",
+            "1 pound ground beef",
+            "1 onion, diced",
+            "2 cloves garlic, minced",
+            "1 carrot, finely diced",
+            "1 celery stalk, finely diced",
+            "1 can (28 oz) crushed tomatoes",
+            "2 tablespoons tomato paste",
+            "1 teaspoon dried basil",
+            "1 teaspoon dried oregano",
+            "1/2 cup red wine (optional)",
+            "Salt and pepper to taste",
+            "Grated Parmesan cheese for serving",
+          ],
+          steps: [
+            "In a large pot, heat some olive oil over medium heat. Add onion, garlic, carrot, and celery, and sauté until softened.",
+            "Add ground beef and cook until browned, breaking it up with a spoon.",
+            "Add tomato paste and stir for 1-2 minutes.",
+            "Pour in red wine if using, and cook for another 2-3 minutes.",
+            "Add crushed tomatoes, dried herbs, salt, and pepper. Bring to a simmer.",
+            "Reduce heat to low, cover, and simmer for 45 minutes, stirring occasionally.",
+            "Meanwhile, cook spaghetti according to package instructions.",
+            "Serve sauce over drained spaghetti, topped with grated Parmesan cheese.",
+          ],
+          nutrition: {
+            calories: 420,
+            fat: 12,
+            carbs: 58,
+            protein: 22,
+          },
+        },
+        {
+          id: 4,
+          title: "Chocolate Chip Cookies",
+          img: "https://cdn.loveandlemons.com/wp-content/uploads/2024/08/chocolate-chip-cookie-recipe.jpg",
+          category: "dessert",
+          prepTime: "15 mins",
+          cookTime: "10 mins",
+          servings: 24,
+          difficulty: "Easy",
+          description:
+            "Classic chocolate chip cookies with a soft center and crispy edges.",
+          ingredients: [
+            "2 1/4 cups all-purpose flour",
+            "1 teaspoon baking soda",
+            "1 teaspoon salt",
+            "1 cup unsalted butter, softened",
+            "3/4 cup granulated sugar",
+            "3/4 cup packed brown sugar",
+            "2 large eggs",
+            "2 teaspoons vanilla extract",
+            "2 cups semi-sweet chocolate chips",
+          ],
+          steps: [
+            "Preheat oven to 375°F (190°C).",
+            "In a small bowl, mix flour, baking soda, and salt.",
+            "In a large bowl, beat butter, granulated sugar, and brown sugar until creamy.",
+            "Add eggs one at a time, then stir in vanilla.",
+            "Gradually blend in the flour mixture.",
+            "Stir in chocolate chips.",
+            "Drop rounded tablespoons of dough onto ungreased baking sheets.",
+            "Bake for 9 to 11 minutes or until golden brown.",
+            "Let cool on baking sheets for 2 minutes, then transfer to wire racks.",
+          ],
+          nutrition: {
+            calories: 150,
+            fat: 7,
+            carbs: 19,
+            protein: 2,
+          },
+        },
+        {
+          id: 5,
+          title: "Vegetable Stir Fry",
+          img: "https://www.dinneratthezoo.com/wp-content/uploads/2019/02/vegetable-stir-fry-3.jpg",
+          category: "vegetarian",
+          prepTime: "15 mins",
+          cookTime: "10 mins",
+          servings: 4,
+          difficulty: "Easy",
+          description:
+            "A quick and colorful vegetable stir fry packed with nutrients.",
+          ingredients: [
+            "2 tablespoons vegetable oil",
+            "2 cloves garlic, minced",
+            "1 tablespoon ginger, grated",
+            "1 bell pepper, sliced",
+            "1 carrot, julienned",
+            "1 cup broccoli florets",
+            "1 cup snow peas",
+            "1 cup mushrooms, sliced",
+            "3 tablespoons soy sauce",
+            "1 tablespoon sesame oil",
+            "1 teaspoon honey or maple syrup",
+            "Sesame seeds for garnish",
+            "Cooked rice for serving",
+          ],
+          steps: [
+            "Heat vegetable oil in a large wok or skillet over high heat.",
+            "Add garlic and ginger, stir for 30 seconds until fragrant.",
+            "Add vegetables, starting with those that take longer to cook (carrots, broccoli).",
+            "After 2-3 minutes, add the remaining vegetables and stir fry for another 3-4 minutes until crisp-tender.",
+            "In a small bowl, mix soy sauce, sesame oil, and honey/maple syrup.",
+            "Pour the sauce over the vegetables and toss to coat.",
+            "Cook for another minute until sauce is slightly thickened.",
+            "Garnish with sesame seeds and serve over cooked rice.",
+          ],
+          nutrition: {
+            calories: 180,
+            fat: 9,
+            carbs: 22,
+            protein: 5,
+          },
+        },
+        {
+          id: 6,
+          title: "Banana Smoothie",
+          img: "https://www.allrecipes.com/thmb/kxoD3dghe_cR58zI2pccBfAe-Dk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/6236089-780238d875594b00871a5cbbd37a8a36.jpg",
+          category: "breakfast",
+          prepTime: "5 mins",
+          cookTime: "0 mins",
+          servings: 2,
+          difficulty: "Easy",
+          description:
+            "A creamy, nutritious breakfast smoothie with banana and other goodies.",
+          ingredients: [
+            "2 ripe bananas",
+            "1 cup Greek yogurt",
+            "1 cup milk (any type)",
+            "2 tablespoons honey or maple syrup",
+            "1/2 teaspoon vanilla extract",
+            "1/2 teaspoon cinnamon",
+            "1 tablespoon chia seeds (optional)",
+            "Ice cubes",
+          ],
+          steps: [
+            "Place all ingredients in a blender.",
+            "Blend until smooth and creamy.",
+            "Pour into glasses and enjoy immediately.",
+          ],
+          nutrition: {
+            calories: 215,
+            fat: 3.5,
+            carbs: 42,
+            protein: 8,
+          },
+        },
+        {
+          id: 7,
+          title: "Vegetarian Chili",
+          img: "https://s23209.pcdn.co/wp-content/uploads/2022/10/211129_DAMN-DELICIOUS_Vegetarian-Chili_279.jpg",
+          category: "vegetarian",
+          prepTime: "15 mins",
+          cookTime: "45 mins",
+          servings: 6,
+          difficulty: "Medium",
+          description:
+            "A hearty and flavorful vegetarian chili loaded with beans and vegetables.",
+          ingredients: [
+            "2 tablespoons olive oil",
+            "1 onion, diced",
+            "2 bell peppers, diced",
+            "3 cloves garlic, minced",
+            "2 tablespoons chili powder",
+            "1 tablespoon cumin",
+            "1 teaspoon oregano",
+            "1/4 teaspoon cayenne pepper (optional)",
+            "2 cans (15 oz each) diced tomatoes",
+            "1 can (15 oz) black beans, drained and rinsed",
+            "1 can (15 oz) kidney beans, drained and rinsed",
+            "1 can (15 oz) corn, drained",
+            "2 cups vegetable broth",
+            "Salt and pepper to taste",
+            "Toppings: avocado, cheese, sour cream, cilantro",
+          ],
+          steps: [
+            "Heat olive oil in a large pot over medium heat.",
+            "Add onion and bell peppers, and sauté until softened, about 5 minutes.",
+            "Add garlic and cook for another minute.",
+            "Stir in chili powder, cumin, oregano, and cayenne pepper if using.",
+            "Add diced tomatoes, beans, corn, and vegetable broth.",
+            "Bring to a boil, then reduce heat and simmer for 30-40 minutes.",
+            "Season with salt and pepper to taste.",
+            "Serve with your choice of toppings.",
+          ],
+          nutrition: {
+            calories: 280,
+            fat: 6,
+            carbs: 45,
+            protein: 12,
+          },
+        },
+        {
+          id: 8,
+          title: "Grilled Salmon",
+          img: "https://www.allrecipes.com/thmb/CfocX_0yH5_hFxtbFkzoWXrlycs=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/ALR-12720-grilled-salmon-i-VAT-4x3-888cac0fb8a34f6fbde7bf836850cd1c.jpg",
+          category: "dinner",
+          prepTime: "10 mins",
+          cookTime: "15 mins",
+          servings: 4,
+          difficulty: "Medium",
+          description:
+            "Delicious grilled salmon with a lemon and herb marinade.",
+          ingredients: [
+            "4 salmon fillets (about 6 oz each)",
+            "2 tablespoons olive oil",
+            "2 tablespoons lemon juice",
+            "2 cloves garlic, minced",
+            "1 teaspoon dried dill",
+            "1 teaspoon dried thyme",
+            "Salt and pepper to taste",
+            "Lemon slices for serving",
+          ],
+          steps: [
+            "In a small bowl, mix olive oil, lemon juice, garlic, dill, thyme, salt, and pepper.",
+            "Place salmon fillets in a shallow dish and pour marinade over them.",
+            "Let marinate for at least 30 minutes in the refrigerator.",
+            "Preheat grill to medium-high heat.",
+            "Place salmon on the grill, skin side down.",
+            "Grill for 4-6 minutes per side, depending on thickness, until fish flakes easily with a fork.",
+            "Serve with lemon slices.",
+          ],
+          nutrition: {
+            calories: 320,
+            fat: 22,
+            carbs: 1,
+            protein: 29,
+          },
+        },
+      ];
+
+      function generateRecipeCards(recipesArray) {
+        const container = document.getElementById("recipes-container");
+        container.innerHTML = "";
+
+        if (recipesArray.length === 0) {
+          container.innerHTML =
+            '<p style="grid-column: 1/-1; text-align: center; font-size: 18px; color: #666;">No recipes found. Try a different search or category.</p>';
+          return;
+        }
+
+        recipesArray.forEach((recipe) => {
+          const card = document.createElement("div");
+          card.className = "recipe-card";
+          card.innerHTML = `
+                    <div class="recipe-image">
+                      <img src="${recipe.img}" alt="">
+                    </div>
+                    <div class="recipe-content">
+                        <h2 class="recipe-title">${recipe.title}</h2>
+                        <div class="recipe-meta">
+                            <span>${
+                              recipe.category.charAt(0).toUpperCase() +
+                              recipe.category.slice(1)
+                            }</span>
+                            <span>${recipe.prepTime} prep</span>
+                        </div>
+                        <p class="recipe-description">${recipe.description}</p>
+                        <a href="#" class="view-recipe" data-id="${
+                          recipe.id
+                        }">View Recipe</a>
+                    </div>
+                `;
+          container.appendChild(card);
+        });
+
+        document.querySelectorAll(".view-recipe").forEach((button) => {
+          button.addEventListener("click", function (e) {
+            e.preventDefault();
+            const recipeId = parseInt(this.getAttribute("data-id"));
+            openRecipeModal(recipeId);
+          });
+        });
+      }
+
+      function openRecipeModal(recipeId) {
+        const recipe = recipes.find((r) => r.id === recipeId);
+        if (!recipe) return;
+
+        const modalContent = document.getElementById("modal-content-container");
+        modalContent.innerHTML = `
+                <div class="recipe-header">
+                    <h2>${recipe.title}</h2>
+                    <p>${recipe.description}</p>
+                </div>
+                
+                <div class="recipe-details">
+                    <div class="detail">
+                        <p>Prep Time</p>
+                        <p class="detail-value">${recipe.prepTime}</p>
+                    </div>
+                    <div class="detail">
+                        <p>Cook Time</p>
+                        <p class="detail-value">${recipe.cookTime}</p>
+                    </div>
+                    <div class="detail">
+                        <p>Servings</p>
+                        <p class="detail-value">${recipe.servings}</p>
+                    </div>
+                    <div class="detail">
+                        <p>Difficulty</p>
+                        <p class="detail-value">${recipe.difficulty}</p>
+                    </div>
+                </div>
+                
+                <div class="recipe-section">
+                    <h3>Ingredients</h3>
+                    <ul class="ingredients-list">
+                        ${recipe.ingredients
+                          .map((ingredient) => `<li>${ingredient}</li>`)
+                          .join("")}
+                    </ul>
+                </div>
+                
+                <div class="recipe-section">
+                    <h3>Instructions</h3>
+                    <ol class="steps-list">
+                        ${recipe.steps
+                          .map((step) => `<li>${step}</li>`)
+                          .join("")}
+                    </ol>
+                </div>
+                
+                <div class="recipe-section">
+                    <h3>Nutrition Information</h3>
+                    <div class="nutrition">
+                        <div class="nutrition-item">Calories: ${
+                          recipe.nutrition.calories
+                        } kcal</div>
+                        <div class="nutrition-item">Fat: ${
+                          recipe.nutrition.fat
+                        }g</div>
+                        <div class="nutrition-item">Carbs: ${
+                          recipe.nutrition.carbs
+                        }g</div>
+                        <div class="nutrition-item">Protein: ${
+                          recipe.nutrition.protein
+                        }g</div>
+                    </div>
+                </div>
+            `;
+
+        document.getElementById("recipe-modal").style.display = "block";
+      }
+
+      document
+        .querySelector(".close-btn")
+        .addEventListener("click", function () {
+          document.getElementById("recipe-modal").style.display = "none";
+        });
+
+      window.addEventListener("click", function (event) {
+        const modal = document.getElementById("recipe-modal");
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+
+      document.querySelectorAll(".category-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          document.querySelectorAll(".category-btn").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+          this.classList.add("active");
+
+          const category = this.getAttribute("data-category");
+          const searchQuery = document
+            .getElementById("search-input")
+            .value.toLowerCase();
+
+          let filteredRecipes;
+          if (category === "all") {
+            filteredRecipes = recipes;
+          } else {
+            filteredRecipes = recipes.filter(
+              (recipe) => recipe.category === category
+            );
+          }
+
+          if (searchQuery) {
+            filteredRecipes = filteredRecipes.filter((recipe) => {
+              return (
+                recipe.title.toLowerCase().includes(searchQuery) ||
+                recipe.description.toLowerCase().includes(searchQuery)
+              );
+            });
+          }
+
+          generateRecipeCards(filteredRecipes);
+        });
+      });
+
+      document
+        .getElementById("search-btn")
+        .addEventListener("click", function () {
+          const searchQuery = document
+            .getElementById("search-input")
+            .value.toLowerCase();
+          const activeCategory = document
+            .querySelector(".category-btn.active")
+            .getAttribute("data-category");
+
+          let filteredRecipes;
+          if (activeCategory === "all") {
+            filteredRecipes = recipes;
+          } else {
+            filteredRecipes = recipes.filter(
+              (recipe) => recipe.category === activeCategory
+            );
+          }
+
+          if (searchQuery) {
+            filteredRecipes = filteredRecipes.filter((recipe) => {
+              return (
+                recipe.title.toLowerCase().includes(searchQuery) ||
+                recipe.description.toLowerCase().includes(searchQuery)
+              );
+            });
+          }
+
+          generateRecipeCards(filteredRecipes);
+        });
+
+      document
+        .getElementById("search-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            document.getElementById("search-btn").click();
+          }
+        });
+
+      generateRecipeCards(recipes);
+    </script>
+  </body>
+</html>
